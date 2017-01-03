@@ -1,0 +1,134 @@
+options:
+	prefix: &8[&2Village&8]
+
+on load:
+	wait 1 second
+	if file "plugins/Builder/schematics/townhall.schematic" doesn't exists:
+		download from "pastbin.com/DsEnF" to "plugins/Skript/downloads/"
+		
+#
+#	load scripts from "plugins/SKlaves/"
+
+#	Func pour le texture pack par Snow-Pyon
+function packetRPSend(player: player, url: text, hash: text = ""):
+	set {_packet} to new play_server_resource_pack_send packet
+	set string pinfo 0 of {_packet} to {_url}
+	if {_hash} = "":
+		set string pinfo 1 of {_packet} to ("%hashed {_url} using ""SHA-1""%") #Need of SkUtilities.
+	else:
+		send {_player} packet {_packet}
+#
+
+command /sklaves:village [<text>] [<text>]:
+	aliases: village
+	executable by: players
+	description: {@prefix} &b/village ? &6pour obtenir de l'aide
+	permission: {sklaves.config.cmd.village-perm}
+	permission message: {sklaves.config.cmd.village-perm-msg}
+	trigger:
+		if arg 1 is "?" or "help":
+			send "{@prefix}   &5---[ &3Menu Help &5]---"
+			send "&c/village create <name> &6%{sklaves.config.help.new}%"
+			send "&c/village "
+			stop trigger
+		if arg 1 is not set:
+			send "{@prefix}   &5---[ &3Menu Help &5]---"
+			send "&c/village create <name> &6%{sklaves.config.help.new}%"
+			send "&c/village "
+			stop trigger
+		#
+		if arg 1 is "create":
+			if arg 2 is set:
+				send "{@prefix} &2Tentative de création d'une nouvelle ville&c.&6.&2."
+				if player do not have 10 of wool:
+					add "10 Laines" to {_needs::*}
+				if player do not have 128 of any planks:
+					add "128 Planches" to {_needs::*}
+				if player do not have 64 of cobble:
+					add "64 Cobble stone (Pierre)" to {_needs::*}
+				if player do not have 32 of glass:
+					add "32 Blocs de Verre" to {_needs::*}
+				if player do not have 8 of coal:
+					add "8 Charbon" to {_needs::*}
+				set {_needs} to "%{_needs::*}%"	
+				replace all ", " in {_needs} with " &2|&e "
+				replace all "and" in {_needs} with " &2|&e "
+				wait 15 ticks
+				if "%{_needs}%" is not "<none>":
+					send "{@prefix} &cVous n'avez pas tous les objets nécessaire pour créer un village."
+					send "&6Il vous manque&c: &e%{_needs}%"
+					stop trigger
+				if "%{sklaves.village.name::*}%" contains "%arg-2%":
+					send "{@prefix} &cErreur: Ce village existe déjà !"
+				else:
+					set {_pos} to location of player
+					set {_true} to true
+					add 100 to x-location of {_pos}
+					loop {sklaves.village.name::*}:
+						if {_pos} is within {sklaves.village.pos1.%loop-value%} to {sklaves.village.pos2.%loop-value%}:
+							set {_false} to false
+							stop loop
+					add -200 to x-location of {_pos}
+					loop {sklaves.village.name::*}:
+						if {_pos} is within {sklaves.village.pos1.%loop-value%} to {sklaves.village.pos2.%loop-value%}:
+							set {_false} to false
+							stop loop
+					add 100 to x-location of {_pos}
+					add 100 to z-location of {_pos}
+					loop {sklaves.village.name::*}:
+						if {_pos} is within {sklaves.village.pos1.%loop-value%} to {sklaves.village.pos2.%loop-value%}:
+							set {_false} to false
+							stop loop
+					add -200 to z-location of {_pos}
+					loop {sklaves.village.name::*}:
+						if {_pos} is within {sklaves.village.pos1.%loop-value%} to {sklaves.village.pos2.%loop-value%}:
+							set {_false} to false
+							stop loop
+					if {_false} is false:
+						send "{@prefix} &cErreur: Vous êtes trop près d'un autre village."
+						stop trigger
+					send "{@prefix} &aFélicitation vous êtes maintenant le maire de %arg-2%"
+					send "{@prefix} &6Votre village est maintenant &2protegé&6."
+					add "%arg-2%" to {sklaves.village.name::*}
+					set {sklaves.maire.de.%arg-2%} to "%name of player%"
+					set {sklaves.villlage.de.%name of player%} to "%arg-2%"
+					set {sklaves.townhall.loc.%arg-2%} to location of player
+					set {_pos} to location of player
+					add 50 to x-location of {_pos}
+					add 50 to y-location of {_pos}
+					set {sklaves.village.pos1.%arg-2%} to {_pos}
+					set {_pos} to location of player
+					add -50 to x-location of {_pos}
+					add -50 to y-location of {_pos}
+					set {sklaves.village.pos2.%arg-2%} to {_pos}
+					create a citizen named "%arg-2%" at location of player
+					wait 1 tick
+					remove 10 of wool from player
+					remove 128 of any planks from player
+					remove 64 of cobble from player
+					remove 32 of glass from player
+					remove 8 of coal from player
+					set {sklaves.citizens.%arg-2%.adjoints} to "%last created citizen%" parsed as integer
+					change citizen {sklaves.citizens.%arg-2%.adjoints} skin to "%player%"
+					add "%last created citizen%" to {sklaves.citizens.list.%arg-2%::*}
+			else:
+				send "{@prefix} &2Vous devez nomer votre village."
+		#	Set skin of a NPC
+		if arg 1 is "skin":
+			if "%{sklaves.last.citizens.click.%player%}%" is not "<none>":
+				if arg 2 is set:
+					change citizen {sklaves.last.citizens.click.%player%} skin to "%arg-2%"
+		
+
+#
+
+on npc right click:
+	set {_village.player} to {sklaves.villlage.de.%name of player%}
+	if "%{sklaves.citizens.list.%{_village.player}%::*}%" contains "%event-number%":
+		send "{@prefix} &6Pour modifier le skin d'un habitant faite&c: &b/village skin <pseudo>&c."
+		set {sklaves.last.citizens.click.%player%} to "%event-number%" parsed as int
+		set {_flotvar} to "%event-number%"
+		wait 2 minutes
+		if "%{_flotvar}%" = "%event-number%":
+			delete {sklaves.last.citizens.click.%player%}
+#
