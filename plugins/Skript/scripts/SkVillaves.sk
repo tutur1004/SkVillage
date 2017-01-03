@@ -4,8 +4,8 @@ options:
 on load:
 	load scripts from "plugins/SkVillage/modules-Sk/TownHall.sk"
 	wait 2 ticks
-	#loop {skvillages.config.modules.list::*}:
-	#load scripts from "plugins/SkVillage/modules-Sk/%loop-value%.sk"
+	loop {skvillages.config.modules.list::*}:
+		load scripts from "plugins/SkVillage/modules-Sk/%loop-value%.sk"
 
 #	Func pour le texture pack par Snow-Pyon
 function packetRPSend(player: player, url: text, hash: text = ""):
