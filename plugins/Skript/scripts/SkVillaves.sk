@@ -1,14 +1,6 @@
 options:
 	prefix: &8[&2Village&8]
 
-on load:
-	wait 1 second
-	if file "plugins/Builder/schematics/townhall.schematic" doesn't exists:
-		download from "pastbin.com/DsEnF" to "plugins/Skript/downloads/"
-		
-#
-#	load scripts from "plugins/SKlaves/"
-
 #	Func pour le texture pack par Snow-Pyon
 function packetRPSend(player: player, url: text, hash: text = ""):
 	set {_packet} to new play_server_resource_pack_send packet
