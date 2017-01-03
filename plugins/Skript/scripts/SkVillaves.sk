@@ -1,6 +1,12 @@
 options:
 	prefix: &8[&2Village&8]
 
+on load:
+	load scripts from "plugins/SkVillage/modules-Sk/TownHall.sk"
+	wait 2 ticks
+	#loop {skvillages.config.modules.list::*}:
+	#load scripts from "plugins/SkVillage/modules-Sk/%loop-value%.sk"
+
 #	Func pour le texture pack par Snow-Pyon
 function packetRPSend(player: player, url: text, hash: text = ""):
 	set {_packet} to new play_server_resource_pack_send packet
@@ -11,7 +17,7 @@ function packetRPSend(player: player, url: text, hash: text = ""):
 		send {_player} packet {_packet}
 #
 
-command /sklaves:village [<text>] [<text>]:
+command /SkVillaves:village [<text>] [<text>]:
 	aliases: village
 	executable by: players
 	description: {@prefix} &b/village ? &6pour obtenir de l'aide
@@ -20,12 +26,12 @@ command /sklaves:village [<text>] [<text>]:
 	trigger:
 		if arg 1 is "?" or "help":
 			send "{@prefix}   &5---[ &3Menu Help &5]---"
-			send "&c/village create <name> &6%{sklaves.config.help.new}%"
+			send "&c/village create <name> &6%{skvillages.config.help.new}%"
 			send "&c/village "
 			stop trigger
 		if arg 1 is not set:
 			send "{@prefix}   &5---[ &3Menu Help &5]---"
-			send "&c/village create <name> &6%{sklaves.config.help.new}%"
+			send "&c/village create <name> &6%{skvillages.config.help.new}%"
 			send "&c/village "
 			stop trigger
 		#
@@ -50,30 +56,30 @@ command /sklaves:village [<text>] [<text>]:
 					send "{@prefix} &cVous n'avez pas tous les objets nécessaire pour créer un village."
 					send "&6Il vous manque&c: &e%{_needs}%"
 					stop trigger
-				if "%{sklaves.village.name::*}%" contains "%arg-2%":
+				if "%{skvillages.village.name::*}%" contains "%arg-2%":
 					send "{@prefix} &cErreur: Ce village existe déjà !"
 				else:
 					set {_pos} to location of player
 					set {_true} to true
 					add 100 to x-location of {_pos}
-					loop {sklaves.village.name::*}:
-						if {_pos} is within {sklaves.village.pos1.%loop-value%} to {sklaves.village.pos2.%loop-value%}:
+					loop {skvillages.village.name::*}:
+						if {_pos} is within {skvillages.village.pos1.%loop-value%} to {skvillages.village.pos2.%loop-value%}:
 							set {_false} to false
 							stop loop
 					add -200 to x-location of {_pos}
-					loop {sklaves.village.name::*}:
-						if {_pos} is within {sklaves.village.pos1.%loop-value%} to {sklaves.village.pos2.%loop-value%}:
+					loop {skvillages.village.name::*}:
+						if {_pos} is within {skvillages.village.pos1.%loop-value%} to {skvillages.village.pos2.%loop-value%}:
 							set {_false} to false
 							stop loop
 					add 100 to x-location of {_pos}
 					add 100 to z-location of {_pos}
-					loop {sklaves.village.name::*}:
-						if {_pos} is within {sklaves.village.pos1.%loop-value%} to {sklaves.village.pos2.%loop-value%}:
+					loop {skvillages.village.name::*}:
+						if {_pos} is within {skvillages.village.pos1.%loop-value%} to {skvillages.village.pos2.%loop-value%}:
 							set {_false} to false
 							stop loop
 					add -200 to z-location of {_pos}
-					loop {sklaves.village.name::*}:
-						if {_pos} is within {sklaves.village.pos1.%loop-value%} to {sklaves.village.pos2.%loop-value%}:
+					loop {skvillages.village.name::*}:
+						if {_pos} is within {skvillages.village.pos1.%loop-value%} to {skvillages.village.pos2.%loop-value%}:
 							set {_false} to false
 							stop loop
 					if {_false} is false:
@@ -81,18 +87,18 @@ command /sklaves:village [<text>] [<text>]:
 						stop trigger
 					send "{@prefix} &aFélicitation vous êtes maintenant le maire de %arg-2%"
 					send "{@prefix} &6Votre village est maintenant &2protegé&6."
-					add "%arg-2%" to {sklaves.village.name::*}
-					set {sklaves.maire.de.%arg-2%} to "%name of player%"
-					set {sklaves.villlage.de.%name of player%} to "%arg-2%"
-					set {sklaves.townhall.loc.%arg-2%} to location of player
+					add "%arg-2%" to {skvillages.village.name::*}
+					set {skvillages.maire.de.%arg-2%} to "%name of player%"
+					set {skvillages.villlage.de.%name of player%} to "%arg-2%"
+					set {skvillages.townhall.loc.%arg-2%} to location of player
 					set {_pos} to location of player
 					add 50 to x-location of {_pos}
 					add 50 to y-location of {_pos}
-					set {sklaves.village.pos1.%arg-2%} to {_pos}
+					set {skvillages.village.pos1.%arg-2%} to {_pos}
 					set {_pos} to location of player
 					add -50 to x-location of {_pos}
 					add -50 to y-location of {_pos}
-					set {sklaves.village.pos2.%arg-2%} to {_pos}
+					set {skvillages.village.pos2.%arg-2%} to {_pos}
 					create a citizen named "%arg-2%" at location of player
 					wait 1 tick
 					remove 10 of wool from player
@@ -100,27 +106,27 @@ command /sklaves:village [<text>] [<text>]:
 					remove 64 of cobble from player
 					remove 32 of glass from player
 					remove 8 of coal from player
-					set {sklaves.citizens.%arg-2%.adjoints} to "%last created citizen%" parsed as integer
-					change citizen {sklaves.citizens.%arg-2%.adjoints} skin to "%player%"
-					add "%last created citizen%" to {sklaves.citizens.list.%arg-2%::*}
+					set {skvillages.citizens.%arg-2%.adjoints} to "%last created citizen%" parsed as integer
+					change citizen {skvillages.citizens.%arg-2%.adjoints} skin to "%player%"
+					add "%last created citizen%" to {skvillages.citizens.list.%arg-2%::*}
 			else:
 				send "{@prefix} &2Vous devez nomer votre village."
 		#	Set skin of a NPC
 		if arg 1 is "skin":
-			if "%{sklaves.last.citizens.click.%player%}%" is not "<none>":
+			if "%{skvillages.last.citizens.click.%player%}%" is not "<none>":
 				if arg 2 is set:
-					change citizen {sklaves.last.citizens.click.%player%} skin to "%arg-2%"
+					change citizen {skvillages.last.citizens.click.%player%} skin to "%arg-2%"
 		
 
 #
 
 on npc right click:
-	set {_village.player} to {sklaves.villlage.de.%name of player%}
-	if "%{sklaves.citizens.list.%{_village.player}%::*}%" contains "%event-number%":
+	set {_village.player} to {skvillages.villlage.de.%name of player%}
+	if "%{skvillages.citizens.list.%{_village.player}%::*}%" contains "%event-number%":
 		send "{@prefix} &6Pour modifier le skin d'un habitant faite&c: &b/village skin <pseudo>&c."
-		set {sklaves.last.citizens.click.%player%} to "%event-number%" parsed as int
+		set {skvillages.last.citizens.click.%player%} to "%event-number%" parsed as int
 		set {_flotvar} to "%event-number%"
 		wait 2 minutes
 		if "%{_flotvar}%" = "%event-number%":
-			delete {sklaves.last.citizens.click.%player%}
+			delete {skvillages.last.citizens.click.%player%}
 #
