@@ -1,0 +1,2 @@
+on load:
+	set {skvillages.config.modules.list::*}  to yml list "Modules" get of "plugins/SkVillage/config.yml"
