@@ -6,6 +6,10 @@ on load:
 	wait 2 ticks
 	loop {skvillages.config.modules.list::*}:
 		load scripts from "plugins/SkVillage/modules-Sk/%loop-value%.sk"
+	wait 2 ticks
+	if {skvillages.loaded.modules.townhall} is not true:
+		send "{@prefix} &4ERROR&6: &cLe module &b'&2TownHall&b' &2est obligatoire &e!!" to console
+		execute console command "skript disable %script%"
 
 #	Func pour le texture pack par Snow-Pyon
 function packetRPSend(player: player, url: text, hash: text = ""):
@@ -21,8 +25,8 @@ command /SkVillaves:village [<text>] [<text>]:
 	aliases: village
 	executable by: players
 	description: {@prefix} &b/village ? &6pour obtenir de l'aide
-	permission: {sklaves.config.cmd.village-perm}
-	permission message: {sklaves.config.cmd.village-perm-msg}
+	permission: {skvillages.config.cmd.village-perm}
+	permission message: {skvillages.config.cmd.village-perm-msg}
 	trigger:
 		if arg 1 is "?" or "help":
 			send "{@prefix}   &5---[ &3Menu Help &5]---"
