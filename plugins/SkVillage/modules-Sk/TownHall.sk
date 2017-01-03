@@ -1,1 +1,9 @@
-#
+options:
+	prefix: &8[&2Village&8]
+
+on load:
+	wait 1 second
+	if file "townhall_lev_1.schematic" doesn't exists:
+		download from "https://github.com/tutur1004/SkVillage/raw/master/plugins/Builder/schematics/townhall_lev_1.schematic" to "plugins/Builder/schematics/townhall_lev_1.schematic"
+	if file "townhall_lev_2.schematic" doesn't exists:
+		download from "https://github.com/tutur1004/SkVillage/raw/master/plugins/Builder/schematics/townhall_lev_2.schematic" to "plugins/Builder/schematics/townhall_lev_2.schematic"
